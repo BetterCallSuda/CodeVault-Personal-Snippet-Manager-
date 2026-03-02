@@ -12,3 +12,8 @@ class LoginForm(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Login")
 
+class SnippetForm(FlaskForm):
+    title = StringField("Title", validators=[DataRequired()])
+    category = StringField("Category")
+    code = TextAreaField("Code", validators=[DataRequired()])
+    submit = SubmitField("Save Snippet")
