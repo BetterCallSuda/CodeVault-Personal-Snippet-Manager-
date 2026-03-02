@@ -51,3 +51,49 @@ def login():
         flash("Invalid credentials")
     return render_template("login.html", form=form)
 
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    search = request.args.get("search")
+    if search:
+        snippets = Snippet.query.filter(
+            Snippet.user_id == current_user.id,
+            Snippet.title.contains(search)
+        ).all()
+    else:
+        snippets = current_user.snippets
+    return render_template("dashboard.html", snippets=snippets)
+
+@app.route("/add", methods=["GET", "POST"])
+@login_required
+def add_snippet():
+    form = SnippetForm()
+    if form.validate_on_submit():
+        snippet = Snippet(
+            title=form.title.data,
+            category=form.category.data,
+            code=form.code.data,
+            owner=current_user
+        )
+        db.session.add(snippet)
+        db.session.commit()
+        return redirect(url_for("dashboard"))
+    return render_template("add_snippet.html", form=form)
+
+@app.route("/delete/<int:id>")
+@login_required
+def delete_snippet(id):
+    snippet = Snippet.query.get(id)
+    if snippet.owner == current_user:
+        db.session.delete(snippet)
+        db.session.commit()
+    return redirect(url_for("dashboard"))
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("index"))
+
+if __name__ == "__main__":
+    app.run(debug=True)
