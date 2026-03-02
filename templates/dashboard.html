@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-info">Your Code Snippets 🚀</h2>
+
+<form method="GET">
+  <input name="search" placeholder="Search..." class="form-control mb-3">
+</form>
+
+<a href="{{ url_for('add_snippet') }}" class="btn btn-success mb-3">+ Add Snippet</a>
+
+{% for snippet in snippets %}
+<div class="card mb-3 bg-dark text-light p-3">
+  <h5>{{ snippet.title }} ({{ snippet.category }})</h5>
+  <pre><code>{{ snippet.code }}</code></pre>
+  <a href="{{ url_for('delete_snippet', id=snippet.id) }}" class="btn btn-danger btn-sm">Delete</a>
+</div>
+{% endfor %}
+
+<a href="{{ url_for('logout') }}" class="btn btn-warning mt-3">Logout</a>
+{% endblock %}
